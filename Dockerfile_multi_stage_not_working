@@ -1,0 +1,39 @@
+# base image
+FROM node:20.17.0-alpine3.19 as base
+
+#
+# STAGE 1: build
+# 
+FROM base as builder
+
+# set working directory
+WORKDIR /home/build
+
+# copy package.json and package-lock.json
+COPY package*.json ./
+
+# install dependencies
+RUN npm install
+
+COPY . .
+
+# build app
+RUN npm run build
+
+# STAGE 2: Runner
+FROM base as runner
+WORKDIR /home/graphql-server
+
+# copy build files
+COPY --from=builder /home/build/dist ./dist
+COPY --from=builder /home/build/package.json .
+COPY --from=builder /home/build/package-lock.json .
+
+# install only production dependencies
+RUN npm install --only=production
+
+# expose port
+EXPOSE 4000
+
+# start app
+CMD ["npm", "start"]

@@ -1,0 +1,18 @@
+# base image
+FROM ubuntu
+
+# install nodejs
+RUN apt-get update
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt-get install -y nodejs
+
+# copy the content of the local src directory to the working directory
+COPY . /home/graphql-server
+
+# set working directory
+WORKDIR /home/graphql-server
+
+# install dependencies
+RUN npm install

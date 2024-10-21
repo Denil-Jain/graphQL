@@ -1,0 +1,14 @@
+# base image
+FROM node:20.17.0-alpine3.19
+
+# copy the content of the local src directory to the working directory
+COPY . /home/graphql-server
+
+# set working directory
+WORKDIR /home/graphql-server
+
+# install dependencies
+RUN npm install
+
+# start app
+CMD ["npm", "start"]
